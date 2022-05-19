@@ -33,6 +33,7 @@ source("ppcc_fn.R")
 source("medianofmeans.R")
 library(lmom)
 library(dplyr)
+library(homtest)
 
 files=list.files('datasets/USGS/sites/',full.names=TRUE)
 
@@ -40,14 +41,33 @@ sf=c()
 
 for (i in 1:length(files)){
   
-  dat=read.table(files[i])
+  
+  dat=read.table(paste0('datasets/USGS/sites/',i,'.txt'))
+  
+  if (nrow(dat)>1){
+  
+    dat$Date=as.Date(dat$Date)  
+  
+  d=as.Date(dat$Date)
+
+  
+  date_range<-seq(min(d),max(d),by=1)
+  
+  missing=date_range[!date_range %in% d]}
   
   # don't use sites with less than 1000 measurements
+
+  # filter dates depending on desired range and only keep values above 0
   
-  if (nrow(dat)>=1000){
+  if (nrow(dat)>=1000 && length(missing)==0 && min(dat$X_00060_00003,na.rm=T)>0 && min(d)<='1960-01-01' && max(d)>='2000-01-01'){
+    
+    #if(dat$Date>'1990-01-01'){
     
     if (names(dat)[4]=="X_00060_00003"){
-      dat %>% rename(Q=X_00060_00003) %>% select(site_no,Q)->dat }
+      dat %>% rename(Q=X_00060_00003) %>% select(site_no,Date,Q)->dat
+      
+      dat %>% filter(Date>'1960-01-01' & Date<'2000-01-01')->dat
+      }
     
     else{
       q1=c()
@@ -62,16 +82,16 @@ for (i in 1:length(files)){
           q1=rbind(q1,q)}}
       
       dat<-q1
-      
+      dat %>% filter(Date>'1960-01-01' & Date<'2000-01-01')->dat
     }
     
     dat %>% na.omit() ->dat
     
     
-    dat %>% group_by(site_no) %>% filter(Q>0) %>% summarize(MOM=mom(Q),Sample=mean(Q,na.rm=T),Lskew=lmom::samlmu(Q,nmom=3)[3],
+    try(dat %>% group_by(site_no) %>% filter(Q>0) %>% summarize(minDate=min(Date),maxDate=max(Date),max=max(Q,na.rm=T),MOM=mom(Q),Sample=mean(Q,na.rm=T),Lskew=lmom::samlmu(Q,nmom=3)[3],
                                                             LCV=lmom::samlmu(Q,nmom=2)[2]/mean(Q), n=length(Q), LNppcc=CDFln(Q), GPppcc=CDFgp(Q), PLppcc=CDFpl(Q),
-                                                            perc_err=((Sample-MOM)/MOM)*100,Lkurtosis=lmom::samlmu(Q,nmom=4)[4]) %>% 
-      distinct()->sf1
+                                                            perc_err=((Sample-MOM)/MOM)*100,Lkurtosis=lmom::samlmu(Q,nmom=4)[4]) %>%
+     							    distinct()->sf1)
     
 
     sf=rbind(sf1,sf)
@@ -81,4 +101,4 @@ for (i in 1:length(files)){
   
 }
 
-sf %>% saveRDS("USGS_processed.rds")
+sf %>% saveRDS("USGS_processed_no_date_gaps_1960-2000.rds")
