@@ -8,7 +8,7 @@ All data is located in the `datasets` folder.
 
 3. Check robustness of distributional hypotheses obtained from Step 2 using probability-probability plots. Correlation coefficients and plots are generated in `PPplots.R`.
 
-4. Perform controlled Monte Carlo experiments evaluating estimators of the mean with lognormal (`LN2.R`), generalized Pareto (`GPD.R`), and power law (`powerlaw.R`) data. Plot the RMSE and bias of the intended distribution's MLE, the sample mean, and the median of means at varying degrees of skew (`alldist_rmse_bias_fig.R`).
+4. Perform controlled Monte Carlo experiments evaluating estimators of the mean with lognormal (`LN2.R`), generalized Pareto (`GPD.R`), and power law (`powerlaw.R`) data. Plot the Mean Absolute Error (MAE), L-scale, and bias of the intended distribution's MLE, the sample mean, and the median of means at varying degrees of skew (`alldist_rmse_bias_fig.R`).
 
 5. Test estimators on datasets from Steps 1-3 (`SI_Table.R`).
 
