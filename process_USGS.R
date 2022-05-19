@@ -58,6 +58,8 @@ for (i in 1:length(files)){
   # don't use sites with less than 1000 measurements
 
   # filter dates depending on desired range and only keep values above 0
+
+  # only use data if there are no date gaps
   
   if (nrow(dat)>=1000 && length(missing)==0 && min(dat$X_00060_00003,na.rm=T)>0 && min(d)<='1960-01-01' && max(d)>='2000-01-01'){
     
