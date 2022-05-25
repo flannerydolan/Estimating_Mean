@@ -92,7 +92,7 @@ for (i in 1:length(files)){
     
     try(dat %>% group_by(site_no) %>% filter(Q>0) %>% summarize(minDate=min(Date),maxDate=max(Date),max=max(Q,na.rm=T),MOM=mom(Q),Sample=mean(Q,na.rm=T),Lskew=lmom::samlmu(Q,nmom=3)[3],
                                                             LCV=lmom::samlmu(Q,nmom=2)[2]/mean(Q), n=length(Q), LNppcc=CDFln(Q), GPppcc=CDFgp(Q), PLppcc=CDFpl(Q),
-                                                            perc_err=((Sample-MOM)/MOM)*100,Lkurtosis=lmom::samlmu(Q,nmom=4)[4]) %>%
+                                                            Lkurtosis=lmom::samlmu(Q,nmom=4)[4]) %>%
      							    distinct()->sf1)
     
 
